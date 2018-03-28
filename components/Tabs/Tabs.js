@@ -4,55 +4,106 @@ class TabsItem {
   deselect() { this.element.classList.remove('Tabs__item-selected') }
 }
 
+// Make this higher-order
 class TabsLink {
-  constructor(element, parent) {
-    this.element = element;
-    this.tabs = parent;
-
-    const tabsItem = this.tabs.getTab(this.element.dataset.tab);
-    this.tabsItem = new TabsItem(tabsItem);
-
-    this.element.addEventListener('click', () => {
-      this.tabs.updateActive(this);
-      this.select();
-    });
-  };
-
-  select() {
-    this.element.classList.add('Tabs__link-selected');
-    this.tabsItem.select();
-  }
-  deselect() {
-    this.element.classList.remove('Tabs__link-selected');
-    this.tabsItem.deselect();
-  }
+  constructor(element) { this.element = element }
+  select() { this.element.classList.add('Tabs__link-selected') }
+  deselect() { this.element.classList.remove('Tabs__link-selected') }
 }
 
 class Tabs {
   constructor(element) {
-    this.element = element;
-    this.links = element.querySelectorAll(".Tabs__link");
-    this.links = [...this.links].map(link => new TabsLink(link, this));
-    this.activeLink = this.links[0];
-    this.init();
+    this.element = element
+    this.state = 1
+
+    const links = [...element.querySelectorAll('.Tabs__link')]
+    links.forEach(link => new TabsLink(link))
+
+    this.links = links
+
+    console.log(links)
+    console.log(this.links)
+
+    this.items = [...element.querySelectorAll('.Tabs__item')]
+
+    this.init()
   }
 
   init() {
-    // select the first link and tab upon ititialization
-    this.activeLink.select();
+    this.links.forEach(link => new TabsLink(link))
+    this.items.forEach(item => new TabsItem(item))
+
+    this.addListeners('click', this.links)
   }
 
-  updateActive(newActive) {
-    this.activeLink.deselect();
-    this.activeLink = newActive;
-    this.activeLink.select();
+  addListeners(eventType, elements) {
+    elements.map(el => el.addEventListener(eventType, (evt) => {
+      console.log(evt.target)
+
+    }))
+
   }
 
-  // getTab :: Number -> DOM Node
+  updateTab() {
+
+  }
+
+  // getDOMNOde = fn : Int -> Node
   getTab(data) {
-    return this.element.querySelector(`.Tabs__item[data-tab="${data}"]`);
+    return this.element.querySelector(`.Tabs__item[data-tab="${data}"]`)
   }
 }
 
 const tabs = new Tabs(document.querySelector(".Tabs"));
 
+//const tabsLinks = Array.from(document.querySelectorAll('.Tabs__link')).map(link => new TabsLink(link))
+
+
+/*
+    // DOM Collections
+    const domLinks = element.querySelectorAll(".Tabs__link")
+    const domItems = element.querySelectorAll(".Tabs__item")
+    // Class Collections
+    this.links = [...domLinks].map(link => new TabsLink(link))
+    this.items = [...domItems].map(item => new TabsItem(item))
+
+    this.activeLink = this.links[0]
+    this.activeItem = this.items[0]
+
+    domLinks.forEach((domLink, i) => {
+      domLink.addEventListener('click', (event) => {
+	this.updateActiveLink(this.links[i], i)
+	this.updateActiveItem(this.getItem(domLink.dataset.tab))
+      })
+    })
+
+    this.init()
+  }
+
+  init() {
+    // select the first link and tab upon ititialization
+    this.activeLink.select()
+    this.activeItem.select()
+  }
+
+  updateActiveLink(newLink) {
+    this.activeLink.deselect()
+    this.activeLink = newLink
+    this.activeLink.select()
+  }
+
+  updateActiveItem(newItem) {
+    this.activeItem.deselect()
+    this.activeItem = newItem
+    console.log(this.activeItem)
+  }
+
+  // getTab :: Number -> DOM Node
+  getItem(data) {
+    return this.element.querySelector(`.Tabs__item[data-tab="${data}"]`)
+  }
+}
+
+const tabs = new Tabs(document.querySelector(".Tabs"));
+
+*/
